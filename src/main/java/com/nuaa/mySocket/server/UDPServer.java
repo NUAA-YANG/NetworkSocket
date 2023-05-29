@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Scanner;
 
 /**
  * @Author YZX
@@ -25,6 +26,7 @@ public class UDPServer {
     //开启服务器进行监听
     public void startListening() throws IOException {
         System.out.println("===============服务器开启监听===================");
+        Scanner scanner = new Scanner(System.in);//用来回复
         while (true){
             //1.构建数据包用来接受数据
             DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
@@ -33,15 +35,16 @@ public class UDPServer {
 
             //3.将接受的数据取出
             String receiveData = new String(receivePacket.getData(),0,receivePacket.getLength());
-            //设定退出
+            //如果客户端发送来ex或exit则退出
             if ("ex".equals(receiveData) || "exit".equals(receiveData)){
                 System.out.println("===============服务器退出===================");
                 break;
             }
 
             //4.根据请求进行回复
-            UDPAnswer udpAnswer = new UDPAnswer();
-            String answer = udpAnswer.answer(receiveData);
+            System.out.println("收到消息:{"+receiveData+"}");
+            System.out.println("请输入想要回复的信息:");
+            String answer = scanner.nextLine();
             byte[] answerBytes = answer.getBytes();
 
             //5.将回复封装为数据包发送回客户端
@@ -49,12 +52,6 @@ public class UDPServer {
             DatagramPacket answerPacket = new DatagramPacket(answerBytes, 0, answerBytes.length, receivePacket.getSocketAddress());
             socket.send(answerPacket);
 
-            //6.校验
-            System.out.println("**********本次收发信息如下**********\n" +
-                    "发送方ip:{"+receivePacket.getAddress()+"}\n" +
-                    "发送方端口:{"+receivePacket.getPort()+"}\n"+
-                    "接受信息:{"+receiveData+"}\n"+
-                    "回复信息:{"+answer+"}");
         }
     }
 

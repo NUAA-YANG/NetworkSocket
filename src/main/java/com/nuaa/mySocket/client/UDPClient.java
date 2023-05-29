@@ -53,11 +53,8 @@ public class UDPClient {
 
             //5.将获取的数据取出
             String receiveData = new String(receivePacket.getData(),0,receivePacket.getLength());
+            System.out.println("收到消息:{"+receiveData+"}");
 
-            //6.校验
-            System.out.println("**********本次收发信息如下**********\n" +
-                    "发送信息:{"+request+"}\n" +
-                    "回复信息:{"+receiveData+"}");
         }
     }
 
